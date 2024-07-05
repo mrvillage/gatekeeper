@@ -1,0 +1,24 @@
+[package]
+name = "gatekeeper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.80"
+chrono = "0.4.38"
+dotenv = "0.15.0"
+poise = "0.6.1"
+sea-orm = { version = "0.12.15", features = [
+  "sqlx-sqlite",
+  "runtime-tokio-rustls",
+  "debug-print",
+] }
+tokio = { version = "1.38.0", features = ["tracing", "full"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+entity = { path = "entity" }
+migration = { path = "migration" }
+once_cell = "1.19.0"
+
+[workspace]
+members = [".", "entity", "migration"]
