@@ -1,0 +1,15 @@
+[Unit]
+Description=Gatekeeper
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/host/gatekeeper
+ExecStart=/home/host/gatekeeper/target/release/gatekeeper
+User=host
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
