@@ -1,6 +1,6 @@
 use poise::serenity_prelude::ChannelId;
 use sea_orm::{DatabaseConnection, EntityTrait, Set};
-use tracing::{debug, info};
+use tracing::debug;
 
 static XP_TO_LEVEL: once_cell::sync::Lazy<Vec<i32>> =
     once_cell::sync::Lazy::new(|| (0..=100).map(_xp_to_level).collect());
