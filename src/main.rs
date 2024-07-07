@@ -36,10 +36,18 @@ async fn event_handler(
                                     if !can_earn_xp(&data.db, parent).await? {
                                         return Ok(());
                                     }
+                                } else {
+                                    return Ok(());
                                 }
+                            } else {
+                                return Ok(());
                             }
                         }
+                    } else {
+                        return Ok(());
                     }
+                } else {
+                    return Ok(());
                 }
             }
             let xp = xp_from_message(msg.content.as_str());
@@ -56,7 +64,7 @@ async fn event_handler(
                         &ctx.http,
                         format!(
                             "Congratulations {}! You have reached level {}!",
-                            msg.author.id, level
+                            msg.author, level
                         ),
                     )
                     .await;
