@@ -83,7 +83,7 @@ async fn income(db: &DatabaseConnection) -> Result<UpdateResult, sea_orm::DbErr>
             entity::member::Column::Balance,
             entity::member::Column::Balance
                 .into_simple_expr()
-                .add(100_000_000_00_i64),
+                .add(200_000_000_00_i64),
         )
         .exec(db)
         .await

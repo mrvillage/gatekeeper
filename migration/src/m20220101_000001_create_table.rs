@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Member::Balance)
                             .big_integer()
                             .not_null()
-                            .default(100_000_000_00_i64),
+                            .default(1_000_000_000_00_i64),
                     )
                     .col(ColumnDef::new(Member::Xp).integer().not_null().default(0))
                     .col(
