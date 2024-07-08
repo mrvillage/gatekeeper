@@ -3,7 +3,7 @@ mod utils;
 
 use poise::{
     samples::{register_globally, register_in_guild},
-    serenity_prelude::{self as serenity, FullEvent},
+    serenity_prelude::{self as serenity, CacheHttp, FullEvent, GuildId},
 };
 use sea_orm::{prelude::*, IntoActiveModel, IntoSimpleExpr, Set, UpdateResult};
 use tracing::{debug, info};
@@ -55,7 +55,7 @@ async fn event_handler(
                 .await?
                 .into_active_model();
             member.xp = Set(member.xp.unwrap() + xp);
-            let leveled_up = level_up(&mut member);
+            let leveled_up = level_up(ctx.http(), data, &mut member).await?;
             let level = member.level.clone().unwrap();
             member.save(&data.db).await?;
             if leveled_up {
@@ -68,6 +68,29 @@ async fn event_handler(
                         ),
                     )
                     .await;
+            }
+        },
+        FullEvent::GuildMemberAddition {
+            new_member: member, ..
+        } => {
+            let mem = entity::member::Entity::find_by_id(member.user.id.to_string())
+                .one(&data.db)
+                .await?;
+            if let Some(mem) = mem {
+                let xp_roles = entity::xp_role::Entity::find()
+                    .filter(entity::xp_role::Column::Level.lte(mem.level))
+                    .all(&data.db)
+                    .await?;
+                for role in xp_roles {
+                    ctx.http()
+                        .add_member_role(
+                            data.primary_guild_id,
+                            member.user.id,
+                            role.id.parse().unwrap(),
+                            Some("Role added due to XP level."),
+                        )
+                        .await?;
+                }
             }
         },
         _ => {},
@@ -91,7 +114,8 @@ async fn income(db: &DatabaseConnection) -> Result<UpdateResult, sea_orm::DbErr>
 
 #[derive(Debug)]
 pub struct Data {
-    pub db: sea_orm::DatabaseConnection,
+    pub db:               sea_orm::DatabaseConnection,
+    pub primary_guild_id: GuildId,
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -109,6 +133,10 @@ async fn main() {
         .init();
     let token = std::env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
     let db_url = std::env::var("DATABASE_URL").expect("Expected a database URL in the environment");
+    let primary_guild_id = std::env::var("PRIMARY_GUILD_ID")
+        .expect("Expected a primary guild ID in the environment")
+        .parse()
+        .expect("Failed to parse primary guild ID");
 
     let mut opt = sea_orm::ConnectOptions::new(db_url);
     opt.sqlx_logging_level(tracing::log::LevelFilter::Trace);
@@ -139,7 +167,10 @@ async fn main() {
                 } else {
                     register_globally(ctx, &framework.options().commands).await?;
                 }
-                Ok(Data { db })
+                Ok(Data {
+                    db,
+                    primary_guild_id,
+                })
             })
         })
         .options(poise::FrameworkOptions {

@@ -1,6 +1,8 @@
-use poise::serenity_prelude::ChannelId;
-use sea_orm::{DatabaseConnection, EntityTrait, Set};
+use poise::serenity_prelude::{ChannelId, Http};
+use sea_orm::{prelude::*, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use tracing::debug;
+
+use crate::Data;
 
 static XP_TO_LEVEL: once_cell::sync::Lazy<Vec<i32>> =
     once_cell::sync::Lazy::new(|| (0..=100).map(_xp_to_level).collect());
@@ -41,29 +43,63 @@ pub fn xp_at_level(level: i32) -> i32 {
     XP_AT_LEVEL[level as usize]
 }
 
-pub fn level_up(member: &mut entity::member::ActiveModel) -> bool {
+pub async fn level_up(
+    http: &Http,
+    data: &Data,
+    member: &mut entity::member::ActiveModel,
+) -> Result<bool, crate::Error> {
     let xp = member.xp.clone().unwrap();
     let level = member.level.clone().unwrap();
     let xp_to_next_level = xp_at_level(level + 1);
     if xp >= xp_to_next_level {
         debug!(?member, ?level, "leveling up");
         member.level = Set(level + 1);
-        level_up(member);
-        return true;
+        let roles = entity::xp_role::Entity::find()
+            .filter(entity::xp_role::Column::Level.eq(level + 1))
+            .all(&data.db)
+            .await?;
+        for role in roles {
+            http.add_member_role(
+                data.primary_guild_id,
+                member.id.clone().unwrap().parse().unwrap(),
+                role.id.parse().unwrap(),
+                None,
+            )
+            .await?;
+        }
+        Box::pin(level_up(http, data, member)).await?;
+        return Ok(true);
     }
-    false
+    Ok(false)
 }
 
-pub fn level_down(member: &mut entity::member::ActiveModel) -> bool {
+pub async fn level_down(
+    http: &Http,
+    data: &Data,
+    member: &mut entity::member::ActiveModel,
+) -> Result<bool, crate::Error> {
     let xp = member.xp.clone().unwrap();
     let level = member.level.clone().unwrap();
     let xp_to_this_level = xp_at_level(level);
     if xp < xp_to_this_level {
         member.level = Set(level - 1);
-        level_down(member);
-        return true;
+        let roles = entity::xp_role::Entity::find()
+            .filter(entity::xp_role::Column::Level.eq(level))
+            .all(&data.db)
+            .await?;
+        for role in roles {
+            http.remove_member_role(
+                data.primary_guild_id,
+                member.id.clone().unwrap().parse().unwrap(),
+                role.id.parse().unwrap(),
+                None,
+            )
+            .await?;
+        }
+        Box::pin(level_down(http, data, member)).await?;
+        return Ok(true);
     }
-    false
+    Ok(false)
 }
 
 const INVALID_STARTS: [char; 28] = [

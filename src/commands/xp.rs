@@ -52,7 +52,7 @@ pub async fn add_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(), 
         .await?
         .into_active_model();
     member.xp = Set(member.xp.unwrap() + xp);
-    let leveled_up = level_up(&mut member);
+    let leveled_up = level_up(ctx.http(), ctx.data(), &mut member).await?;
     member.save(&ctx.data().db).await?;
     Embed::success(&ctx)
         .description(format!(
@@ -80,7 +80,7 @@ pub async fn remove_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(
             .await;
     }
     member.xp = Set(member.xp.unwrap() - xp);
-    let leveled_down = level_down(&mut member);
+    let leveled_down = level_down(ctx.http(), ctx.data(), &mut member).await?;
     member.save(&ctx.data().db).await?;
     Embed::success(&ctx)
         .description(format!(

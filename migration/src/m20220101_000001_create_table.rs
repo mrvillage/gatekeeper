@@ -49,6 +49,17 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(XpRole::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(XpRole::Id).text().not_null().primary_key())
+                    .col(ColumnDef::new(XpRole::Level).integer().not_null())
+                    .to_owned(),
+            )
             .await
     }
 
@@ -59,6 +70,10 @@ impl MigrationTrait for Migration {
 
         manager
             .drop_table(Table::drop().table(XpChannel::Table).to_owned())
+            .await?;
+
+        manager
+            .drop_table(Table::drop().table(XpRole::Table).to_owned())
             .await
     }
 }
@@ -77,4 +92,11 @@ enum Member {
 enum XpChannel {
     Table,
     Id,
+}
+
+#[derive(DeriveIden)]
+enum XpRole {
+    Table,
+    Id,
+    Level,
 }
