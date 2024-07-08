@@ -60,6 +60,44 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(XpRole::Level).integer().not_null())
                     .to_owned(),
             )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(AutoRole::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(AutoRole::Id).text().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(AutoRole::Group)
+                            .text()
+                            .default(None::<String>),
+                    )
+                    .foreign_key(
+                        &mut ForeignKey::create()
+                            .name("fk_auto_role_group")
+                            .from(AutoRole::Table, AutoRole::Group)
+                            .to(AutoRoleGroup::Table, AutoRoleGroup::Name)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .to_owned(),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(AutoRoleGroup::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(AutoRoleGroup::Name)
+                            .text()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .to_owned(),
+            )
             .await
     }
 
@@ -74,6 +112,14 @@ impl MigrationTrait for Migration {
 
         manager
             .drop_table(Table::drop().table(XpRole::Table).to_owned())
+            .await?;
+
+        manager
+            .drop_table(Table::drop().table(AutoRole::Table).to_owned())
+            .await?;
+
+        manager
+            .drop_table(Table::drop().table(AutoRoleGroup::Table).to_owned())
             .await
     }
 }
@@ -99,4 +145,17 @@ enum XpRole {
     Table,
     Id,
     Level,
+}
+
+#[derive(DeriveIden)]
+enum AutoRole {
+    Table,
+    Id,
+    Group,
+}
+
+#[derive(DeriveIden)]
+enum AutoRoleGroup {
+    Table,
+    Name,
 }
