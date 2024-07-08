@@ -1,5 +1,5 @@
 use poise::serenity_prelude::User;
-use sea_orm::{prelude::*, ActiveValue, IntoActiveModel};
+use sea_orm::{prelude::*, ActiveValue, IntoActiveModel, Set};
 
 use crate::{
     utils::{
@@ -90,6 +90,55 @@ pub async fn remove_money(
         .await
 }
 
+#[poise::command(slash_command)]
+pub async fn transfer(
+    ctx: Ctx<'_>,
+    user: User,
+    #[min = 0] amount: f64,
+) -> Result<(), crate::Error> {
+    let mut me = get_member(&ctx.data().db, &ctx.author().id.to_string())
+        .await?
+        .into_active_model();
+    let mut them = get_member(&ctx.data().db, &user.id.to_string())
+        .await?
+        .into_active_model();
+    let amount = to_money(amount);
+    if amount > me.balance.clone().unwrap() {
+        return Embed::error(&ctx)
+            .description("Cannot transfer more money than you have.")
+            .send(&ctx)
+            .await;
+    }
+    me.balance = Set(me.balance.unwrap() - amount);
+    them.balance = Set(them.balance.unwrap() + amount);
+    me.save(&ctx.data().db).await?;
+    them.save(&ctx.data().db).await?;
+    Embed::success(&ctx)
+        .description(format!("Transferred {} to {}.", money(amount), user))
+        .send(&ctx)
+        .await
+}
+
+#[poise::command(slash_command)]
+pub async fn pay(ctx: Ctx<'_>, #[min = 0] amount: f64) -> Result<(), crate::Error> {
+    let mut me = get_member(&ctx.data().db, &ctx.author().id.to_string())
+        .await?
+        .into_active_model();
+    let amount = to_money(amount);
+    if amount > me.balance.clone().unwrap() {
+        return Embed::error(&ctx)
+            .description("Cannot pay more money than you have.")
+            .send(&ctx)
+            .await;
+    }
+    me.balance = Set(me.balance.unwrap() - amount);
+    me.save(&ctx.data().db).await?;
+    Embed::success(&ctx)
+        .description(format!("Paid {}.", money(amount)))
+        .send(&ctx)
+        .await
+}
+
 pub fn commands() -> Vec<poise::Command<Data, crate::Error>> {
-    vec![balance(), add_money(), remove_money()]
+    vec![balance(), add_money(), remove_money(), transfer(), pay()]
 }
