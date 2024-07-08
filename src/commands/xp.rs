@@ -43,7 +43,11 @@ pub async fn xp(ctx: Ctx<'_>, user: Option<User>) -> Result<(), crate::Error> {
         .await
 }
 
-#[poise::command(slash_command, rename = "add-xp")]
+#[poise::command(
+    slash_command,
+    rename = "add-xp",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -65,7 +69,11 @@ pub async fn add_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(), 
         .await
 }
 
-#[poise::command(slash_command, rename = "remove-xp")]
+#[poise::command(
+    slash_command,
+    rename = "remove-xp",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -97,7 +105,11 @@ pub async fn remove_xp(ctx: Ctx<'_>, user: User, #[min = 0] xp: i32) -> Result<(
         .await
 }
 
-#[poise::command(slash_command, rename = "add-level")]
+#[poise::command(
+    slash_command,
+    rename = "add-level",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_level(
     ctx: Ctx<'_>,
     user: User,
@@ -125,7 +137,11 @@ pub async fn add_level(
         .await
 }
 
-#[poise::command(slash_command, rename = "remove-level")]
+#[poise::command(
+    slash_command,
+    rename = "remove-level",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_level(
     ctx: Ctx<'_>,
     user: User,

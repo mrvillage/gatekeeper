@@ -10,7 +10,11 @@ use crate::{
     Data,
 };
 
-#[poise::command(slash_command, rename = "add-auto-role")]
+#[poise::command(
+    slash_command,
+    rename = "add-auto-role",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_auto_role(
     ctx: Ctx<'_>,
     role: Role,
@@ -63,7 +67,11 @@ pub async fn add_auto_role(
     }
 }
 
-#[poise::command(slash_command, rename = "remove-auto-role")]
+#[poise::command(
+    slash_command,
+    rename = "remove-auto-role",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_auto_role(ctx: Ctx<'_>, role: Role) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;

@@ -10,7 +10,11 @@ use crate::{
     Data,
 };
 
-#[poise::command(slash_command, rename = "add-xp-channel")]
+#[poise::command(
+    slash_command,
+    rename = "add-xp-channel",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -37,7 +41,11 @@ pub async fn add_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), crate:
     }
 }
 
-#[poise::command(slash_command, rename = "remove-xp-channel")]
+#[poise::command(
+    slash_command,
+    rename = "remove-xp-channel",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -61,7 +69,11 @@ pub async fn remove_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), cra
     }
 }
 
-#[poise::command(slash_command, rename = "check-xp-channel")]
+#[poise::command(
+    slash_command,
+    rename = "check-xp-channel",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn check_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -82,7 +94,11 @@ pub async fn check_xp_channel(ctx: Ctx<'_>, channel: Channel) -> Result<(), crat
     }
 }
 
-#[poise::command(slash_command, rename = "list-xp-channels")]
+#[poise::command(
+    slash_command,
+    rename = "list-xp-channels",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn list_xp_channels(ctx: Ctx<'_>) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;

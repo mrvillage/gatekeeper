@@ -9,7 +9,11 @@ use crate::{
     Data,
 };
 
-#[poise::command(slash_command, rename = "add-auto-role-group")]
+#[poise::command(
+    slash_command,
+    rename = "add-auto-role-group",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_auto_role_group(ctx: Ctx<'_>, name: String) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -37,7 +41,11 @@ pub async fn add_auto_role_group(ctx: Ctx<'_>, name: String) -> Result<(), crate
     }
 }
 
-#[poise::command(slash_command, rename = "remove-auto-role-group")]
+#[poise::command(
+    slash_command,
+    rename = "remove-auto-role-group",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_auto_role_group(ctx: Ctx<'_>, name: String) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;

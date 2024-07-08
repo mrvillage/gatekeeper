@@ -35,7 +35,11 @@ pub async fn balance(ctx: Ctx<'_>, user: Option<User>) -> Result<(), crate::Erro
         .await
 }
 
-#[poise::command(slash_command, rename = "add-money")]
+#[poise::command(
+    slash_command,
+    rename = "add-money",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_money(
     ctx: Ctx<'_>,
     user: User,
@@ -57,7 +61,11 @@ pub async fn add_money(
         .await
 }
 
-#[poise::command(slash_command, rename = "remove-money")]
+#[poise::command(
+    slash_command,
+    rename = "remove-money",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_money(
     ctx: Ctx<'_>,
     user: User,

@@ -11,7 +11,11 @@ use crate::{
     Data,
 };
 
-#[poise::command(slash_command, rename = "add-admin")]
+#[poise::command(
+    slash_command,
+    rename = "add-admin",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> {
     if !is_owner(&ctx.author().id.to_string()) {
         return not_owner(&ctx).await;
@@ -34,7 +38,11 @@ pub async fn add_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> {
         .await
 }
 
-#[poise::command(slash_command, rename = "remove-admin")]
+#[poise::command(
+    slash_command,
+    rename = "remove-admin",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> {
     if !is_owner(&ctx.author().id.to_string()) {
         return not_owner(&ctx).await;
@@ -57,7 +65,11 @@ pub async fn remove_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> 
         .await
 }
 
-#[poise::command(slash_command, rename = "check-admin")]
+#[poise::command(
+    slash_command,
+    rename = "check-admin",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn check_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -74,7 +86,11 @@ pub async fn check_admin(ctx: Ctx<'_>, user: User) -> Result<(), crate::Error> {
         .await
 }
 
-#[poise::command(slash_command, rename = "list-admins")]
+#[poise::command(
+    slash_command,
+    rename = "list-admins",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn list_admins(ctx: Ctx<'_>) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;

@@ -10,7 +10,11 @@ use crate::{
     Data,
 };
 
-#[poise::command(slash_command, rename = "add-xp-role")]
+#[poise::command(
+    slash_command,
+    rename = "add-xp-role",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn add_xp_role(
     ctx: Ctx<'_>,
     role: Role,
@@ -57,7 +61,11 @@ pub async fn add_xp_role(
     }
 }
 
-#[poise::command(slash_command, rename = "remove-xp-role")]
+#[poise::command(
+    slash_command,
+    rename = "remove-xp-role",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_xp_role(ctx: Ctx<'_>, role: Role) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -97,7 +105,11 @@ pub async fn remove_xp_role(ctx: Ctx<'_>, role: Role) -> Result<(), crate::Error
     }
 }
 
-#[poise::command(slash_command, rename = "check-xp-role")]
+#[poise::command(
+    slash_command,
+    rename = "check-xp-role",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn check_xp_role(ctx: Ctx<'_>, role: Role) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
@@ -121,7 +133,11 @@ pub async fn check_xp_role(ctx: Ctx<'_>, role: Role) -> Result<(), crate::Error>
     }
 }
 
-#[poise::command(slash_command, rename = "list-xp-roles")]
+#[poise::command(
+    slash_command,
+    rename = "list-xp-roles",
+    default_member_permissions = "ADMINISTRATOR"
+)]
 pub async fn list_xp_roles(ctx: Ctx<'_>) -> Result<(), crate::Error> {
     let xp_roles = entity::xp_role::Entity::find()
         .order_by_asc(entity::xp_role::Column::Level)
