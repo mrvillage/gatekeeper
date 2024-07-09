@@ -1,4 +1,12 @@
-use poise::serenity_prelude::{ChannelId, ChannelType, EditThread, ForumTagId, Mention, RoleId};
+use poise::serenity_prelude::{
+    ChannelId,
+    ChannelType,
+    CreateMessage,
+    EditThread,
+    ForumTagId,
+    Mention,
+    RoleId,
+};
 
 use crate::{
     utils::{
@@ -18,7 +26,7 @@ pub async fn approve(ctx: Ctx<'_>) -> Result<(), crate::Error> {
     if !admin(&ctx).await? {
         return not_admin(&ctx).await;
     }
-    ctx.defer().await?;
+    ctx.defer_ephemeral().await?;
     let channel = ctx.guild_channel().await;
     match channel {
         None => {
@@ -60,6 +68,15 @@ pub async fn approve(ctx: Ctx<'_>) -> Result<(), crate::Error> {
                             thread.owner_id.unwrap(),
                             APPROVED_CHARACTER_ROLE,
                             Some("Character approved."),
+                        )
+                        .await?;
+                    thread
+                        .send_message(
+                            ctx.http(),
+                            CreateMessage::new().content(format!(
+                                "Congratulations, {}! Your character has been approved.",
+                                Mention::from(thread.owner_id.unwrap())
+                            )),
                         )
                         .await?;
                     Embed::success(&ctx)
