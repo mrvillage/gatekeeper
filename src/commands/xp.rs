@@ -184,7 +184,7 @@ pub async fn leaderboard(ctx: Ctx<'_>, #[min = 1] page: Option<u64>) -> Result<(
         .await?
         + 1;
     let members = entity::member::Entity::find()
-        .order_by_asc(entity::member::Column::Xp)
+        .order_by_desc(entity::member::Column::Xp)
         .limit(10)
         .offset((page.unwrap_or(1) - 1) * 10)
         .all(&ctx.data().db)
