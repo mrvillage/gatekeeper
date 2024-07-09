@@ -102,16 +102,16 @@ pub async fn level_down(
     Ok(false)
 }
 
-const INVALID_STARTS: [char; 28] = [
+const INVALID_STARTS: [char; 27] = [
     '!', '?', '.', ',', ';', ':', ' ', '(', ')', '{', '}', '[', ']', '<', '>', '\\', '/', '|', '@',
-    '#', '$', '%', '^', '&', '*', '+', '=', '~',
+    '#', '$', '%', '^', '&', '+', '=', '~',
 ];
 
 pub fn xp_from_message(message: &str) -> i32 {
     if message.is_empty() || message.starts_with(INVALID_STARTS) || message.starts_with("http") {
         return 0;
     }
-    ((message.len() / 7) as i32).max(1)
+    (message.chars().filter(|c| c.is_alphanumeric()).count() as i32 / 7).max(1)
 }
 
 pub async fn can_earn_xp(
