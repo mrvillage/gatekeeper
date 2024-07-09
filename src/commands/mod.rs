@@ -1,6 +1,7 @@
 mod admin;
 mod auto_role;
 mod auto_role_group;
+mod character;
 mod economy;
 mod xp;
 mod xp_channel;
@@ -17,5 +18,6 @@ pub fn commands() -> Vec<poise::Command<Data, Error>> {
     commands.extend(xp_role::commands());
     commands.extend(auto_role::commands());
     commands.extend(auto_role_group::commands());
+    commands.extend(character::commands());
     commands
 }

@@ -102,9 +102,9 @@ pub async fn level_down(
     Ok(false)
 }
 
-const INVALID_STARTS: [char; 27] = [
+const INVALID_STARTS: [char; 24] = [
     '!', '?', '.', ',', ';', ':', ' ', '(', ')', '{', '}', '[', ']', '<', '>', '\\', '/', '|', '@',
-    '#', '$', '%', '^', '&', '+', '=', '~',
+    '$', '%', '^', '&', '+',
 ];
 
 pub fn xp_from_message(message: &str) -> i32 {

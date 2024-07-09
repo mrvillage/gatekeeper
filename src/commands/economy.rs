@@ -143,7 +143,7 @@ pub async fn pay(ctx: Ctx<'_>, #[min = 0] amount: f64) -> Result<(), crate::Erro
     me.save(&ctx.data().db).await?;
     Embed::success(&ctx)
         .description(format!("Paid {}.", money(amount)))
-        .send(&ctx)
+        .send_pub(&ctx)
         .await
 }
 
