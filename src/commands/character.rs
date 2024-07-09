@@ -74,7 +74,8 @@ pub async fn approve(ctx: Ctx<'_>) -> Result<(), crate::Error> {
                         .send_message(
                             ctx.http(),
                             CreateMessage::new().content(format!(
-                                "Congratulations, {}! Your character has been approved.",
+                                "Congratulations, {}! Your character has been approved. You can \
+                                 select your faction by using the `/role` command.",
                                 Mention::from(thread.owner_id.unwrap())
                             )),
                         )
