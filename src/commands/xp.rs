@@ -33,7 +33,7 @@ pub async fn xp(ctx: Ctx<'_>, user: Option<User>) -> Result<(), crate::Error> {
             "Progress",
             format!(
                 "{:.2}% ({}/{})",
-                (xp_in_level as f64) / (xp_to_next_level as f64),
+                ((xp_in_level as f64) / (xp_to_next_level as f64)) * 100.0,
                 xp_in_level.ths(),
                 xp_to_next_level.ths(),
             ),
