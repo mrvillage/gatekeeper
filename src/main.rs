@@ -156,7 +156,7 @@ async fn main() {
             ))
             .await;
             let _ = income(&db2).await;
-            tokio::time::sleep(tokio::time::Duration::from_secs(60));
+            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
         }
     });
 
