@@ -123,7 +123,7 @@ pub async fn transfer(
     them.save(&ctx.data().db).await?;
     Embed::success(&ctx)
         .description(format!("Transferred {} to {}.", money(amount), user))
-        .send(&ctx)
+        .send_pub(&ctx)
         .await
 }
 
