@@ -57,7 +57,7 @@ pub async fn add_money(
     member.save(&ctx.data().db).await?;
     Embed::success(&ctx)
         .description(format!("Added {} to {}'s balance.", money(amount), user))
-        .send(&ctx)
+        .send_pub(&ctx)
         .await
 }
 
@@ -94,7 +94,7 @@ pub async fn remove_money(
             money(amount),
             user,
         ))
-        .send(&ctx)
+        .send_pub(&ctx)
         .await
 }
 
