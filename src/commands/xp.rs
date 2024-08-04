@@ -22,8 +22,9 @@ pub async fn xp(ctx: Ctx<'_>, user: Option<User>) -> Result<(), crate::Error> {
         .count(&ctx.data().db)
         .await?
         + 1;
-    let xp_in_level = member.xp - xp_at_level(member.level);
-    let xp_to_next_level = xp_at_level(member.level + 1);
+    let xp_to_current_level = xp_at_level(member.level);
+    let xp_in_level = member.xp - xp_to_current_level;
+    let xp_to_next_level = xp_at_level(member.level + 1) - xp_to_current_level;
     Embed::info(&ctx)
         .author(user)
         .description(format!("Leaderboard rank: #{}", rank.ths()))
